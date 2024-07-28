@@ -1,0 +1,62 @@
+name: Build, Test, and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-test-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to Nexus
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ secrets.NEXUS_REGISTRY }}
+        username: ${{ secrets.NEXUS_USERNAME }}
+        password: ${{ secrets.NEXUS_API_KEY }}
+
+    - name: Build Images
+      run: docker-compose build
+
+    - name: Start Containers
+      run: docker-compose up -d
+      # Start all services in detached mode
+
+    - name: Test DB Container
+      run: |
+        sleep 30 # wait for the DB to initialize
+        docker exec db-container-react-java-mysql-OmerPeled mysql -uroot -pdb-57xsl -e "SHOW DATABASES;"
+      continue-on-error: true
+
+    - name: Test Backend Container
+      run: |
+        sleep 30 # wait for the backend to initialize
+        curl -f http://localhost:8080/actuator/health
+
+    - name: Test Frontend Container
+      run: |
+        sleep 30 # wait for the frontend to initialize
+        curl -f http://localhost:3000
+
+    - name: Push Images
+      if: success()
+      run: |
+        docker tag db-container-react-java-mysql-OmerPeled:latest ${{ secrets.NEXUS_REGISTRY }}/super-app/db-container-react-java-mysql-OmerPeled:latest
+        docker push ${{ secrets.NEXUS_REGISTRY }}/super-app/db-container-react-java-mysql-OmerPeled:latest
+        docker tag backend-container-react-java-mysql-OmerPeled:latest ${{ secrets.NEXUS_REGISTRY }}/super-app/backend-container-react-java-mysql-OmerPeled:latest
+        docker push ${{ secrets.NEXUS_REGISTRY }}/super-app/backend-container-react-java-mysql-OmerPeled:latest
+        docker tag frontend-container-react-java-mysql-OmerPeled:latest ${{ secrets.NEXUS_REGISTRY }}/super-app/frontend-container-react-java-mysql-OmerPeled:latest
+        docker push ${{ secrets.NEXUS_REGISTRY }}/super-app/frontend-container-react-java-mysql-OmerPeled:latest
+
+    - name: Clean up
+      run: docker-compose down
+      if: always()
