@@ -38,24 +38,44 @@ jobs:
     - name: Test Backend Container
       run: |
         sleep 30 # wait for the backend to initialize
-        curl -f http://localhost:8080/actuator/health
+        curl -f http://localhost:8080
 
     - name: Test Frontend Container
       run: |
         sleep 30 # wait for the frontend to initialize
         curl -f http://localhost:3000
 
-    - name: Nexus Repo Publish
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      with:
-        serverUrl: ${{ secrets.NEXUS_REGISTRY }}
-        username: ${{ secrets.NEXUS_USERNAME }}
-        password: ${{ secrets.NEXUS_PASSWORD }}
-        format: docker
-        repository: docker-repo
-        coordinates: groupId=com.example artifactId=app version=1.0.0
-        assets: extension=jar
-        filename: ./target/app-1.0.0.jar
+    - name: Log in to Amazon ECR
+      env:
+        AWS_REGION: us-east-1
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+    
+    - name: Tag backend image
+      run: |
+        IMAGE_TAG=latest
+        ECR_URI=public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        docker tag backend-container-react-java-mysql-OmerPeled:latest $ECR_URI:backend-$IMAGE_TAG
+
+    - name: Push backend image to ECR Public
+      run: |
+        IMAGE_TAG=latest
+        ECR_URI=public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        docker push $ECR_URI:backend-$IMAGE_TAG
+
+    - name: Tag frontend image
+      run: |
+        IMAGE_TAG=latest
+        ECR_URI=public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        docker tag frontend-container-react-java-mysql-OmerPeled:latest $ECR_URI:frontend-$IMAGE_TAG
+
+    - name: Push frontend image to ECR Public
+      run: |
+        IMAGE_TAG=latest
+        ECR_URI=public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        docker push $ECR_URI:frontend-$IMAGE_TAG
 
     - name: Clean up
       run: docker-compose down
