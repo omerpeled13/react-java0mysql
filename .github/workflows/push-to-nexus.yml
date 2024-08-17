@@ -29,10 +29,21 @@ jobs:
       run: docker compose up -d
       # Start all services in detached mode
 
+    - name: Wait for services to stabilize
+      run: |
+        sleep 30  # Allow some time for services to stabilize
+
+    - name: Check backend container logs
+      run: |
+        docker logs backend-container-react-java-mysql-OmerPeled
+
+    - name: Verify containers are running
+      run: |
+        docker ps -a
+      continue-on-error: true
+
     - name: Test DB Container
       run: |
-        sleep 10 # wait for the containers to start
-        docker ps -a
         docker exec db-container-react-java-mysql-OmerPeled mysql -uroot -pdb-57xsl -e "SHOW DATABASES;"
       continue-on-error: true
 
@@ -77,5 +88,5 @@ jobs:
         docker push $ECR_URI:frontend-$IMAGE_TAG
 
     - name: Clean up
-      run: docker-compose down
+      run: docker compose down
       if: always()
