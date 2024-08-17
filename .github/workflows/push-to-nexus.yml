@@ -31,18 +31,17 @@ jobs:
 
     - name: Test DB Container
       run: |
-        sleep 30 # wait for the DB to initialize
+        sleep 10 # wait for the containers to start
+        docker ps -a
         docker exec db-container-react-java-mysql-OmerPeled mysql -uroot -pdb-57xsl -e "SHOW DATABASES;"
       continue-on-error: true
 
     - name: Test Backend Container
       run: |
-        sleep 30 # wait for the backend to initialize
         curl -f http://localhost:8080
 
     - name: Test Frontend Container
       run: |
-        sleep 30 # wait for the frontend to initialize
         curl -f http://localhost:3000
 
     - name: Log in to Amazon ECR
