@@ -49,11 +49,11 @@ jobs:
 
     - name: Test Backend Container
       run: |
-        curl -f http://localhost:8080
+        curl -f http://127.0.0.1:8080
 
     - name: Test Frontend Container
       run: |
-        curl -f http://localhost:3000
+        curl -f http://127.0.0.1:3000
 
     - name: Log in to Amazon ECR
       env:
