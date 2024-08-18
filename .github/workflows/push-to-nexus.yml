@@ -35,7 +35,7 @@ jobs:
 
     - name: Check backend container logs
       run: |
-        docker logs backend-container-react-java-mysql-omer-peled
+        docker logs backend-container-react-java-mysql-omer-peled:latest
 
     - name: Verify containers are running
       run: |
@@ -44,7 +44,7 @@ jobs:
 
     - name: Test DB Container
       run: |
-        docker exec db-container-react-java-mysql-omer-peled mysql -uroot -pdb-57xsl -e "SHOW DATABASES;"
+        docker exec db-container-react-java-mysql-omer-peled:latest mysql -uroot -pdb-57xsl -e "SHOW DATABASES;"
       continue-on-error: true
 
     - name: Test Backend Container
@@ -67,7 +67,7 @@ jobs:
       run: |
         IMAGE_TAG=latest
         ECR_URI=199051453468.dkr.ecr.us-east-1.amazonaws.com/omerpeled_private_repo
-        docker tag backend-container-react-java-mysql-omer-peled $ECR_URI:backend-$IMAGE_TAG
+        docker tag backend-container-react-java-mysql-omer-peled:latest $ECR_URI:backend-$IMAGE_TAG
 
     - name: Push backend image to ECR Public
       run: |
@@ -79,7 +79,7 @@ jobs:
       run: |
         IMAGE_TAG=latest
         ECR_URI=199051453468.dkr.ecr.us-east-1.amazonaws.com/omerpeled_private_repo
-        docker tag frontend-container-react-java-mysql-omer-peled $ECR_URI:frontend-$IMAGE_TAG
+        docker tag frontend-container-react-java-mysql-omer-peled:latest $ECR_URI:frontend-$IMAGE_TAG
 
     - name: Push frontend image to ECR Public
       run: |
