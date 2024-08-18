@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   db:
-    container_name: db-container-react-java-mysql-OmerPeled
+    container_name: db-container-react-java-mysql-omer-peled
     restart: always
     image: mysql:8.0.27
     healthcheck:
@@ -25,7 +25,7 @@ services:
       - react0mysql
 
   backend:
-    container_name: backend-container-react-java-mysql-OmerPeled
+    container_name: backend-container-react-java-mysql-omer-peled
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -47,7 +47,7 @@ services:
       - react0mysql
 
   frontend:
-    container_name: frontend-container-react-java-mysql-OmerPeled
+    container_name: frontend-container-react-java-mysql-omer-peled
     build:
       context: ./frontend
       dockerfile: Dockerfile
