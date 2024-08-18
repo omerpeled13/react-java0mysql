@@ -6,6 +6,12 @@ services:
     container_name: db-container-react-java-mysql-OmerPeled
     restart: always
     image: mysql:8.0.27
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     ports:
       - "3306:3306"
     environment:
@@ -24,7 +30,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
