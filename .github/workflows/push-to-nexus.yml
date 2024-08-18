@@ -61,30 +61,30 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
-        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 199051453468.dkr.ecr.us-east-1.amazonaws.com/omerpeled_private_repo
     
     - name: Tag backend image
       run: |
         IMAGE_TAG=latest
-        ECR_URI=public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        ECR_URI=199051453468.dkr.ecr.us-east-1.amazonaws.com/omerpeled_private_repo
         docker tag backend-container-react-java-mysql-OmerPeled:latest $ECR_URI:backend-$IMAGE_TAG
 
     - name: Push backend image to ECR Public
       run: |
         IMAGE_TAG=latest
-        ECR_URI=public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        ECR_URI=199051453468.dkr.ecr.us-east-1.amazonaws.com/omerpeled_private_repo
         docker push $ECR_URI:backend-$IMAGE_TAG
 
     - name: Tag frontend image
       run: |
         IMAGE_TAG=latest
-        ECR_URI=public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        ECR_URI=199051453468.dkr.ecr.us-east-1.amazonaws.com/omerpeled_private_repo
         docker tag frontend-container-react-java-mysql-OmerPeled:latest $ECR_URI:frontend-$IMAGE_TAG
 
     - name: Push frontend image to ECR Public
       run: |
         IMAGE_TAG=latest
-        ECR_URI=public.ecr.aws/j8p9i7s1/omerpeled-finalexam-module3
+        ECR_URI=199051453468.dkr.ecr.us-east-1.amazonaws.com/omerpeled_private_repo
         docker push $ECR_URI:frontend-$IMAGE_TAG
 
     - name: Clean up
